@@ -1,7 +1,10 @@
 import threading
 from firebase_admin import credentials, firestore, initialize_app
 import scipy.io.wavfile as wav
+import numpy as np
+
 from functions import getSpectralData
+
 
 class StoreListener(threading.Thread):
 
@@ -31,38 +34,16 @@ class StoreListener(threading.Thread):
                 frameSize = 1323
                 stepSize = 441
                 pathologyData = getSpectralData(signal=pathologySignal, frameSize=frameSize, stepSize=stepSize, sampleRate=pathologySampleRate)
-                # print patholgyData types
-                print("Pathology Data Types: ", type(pathologyData))
-                print("Pathology Data Keys: ", pathologyData.keys())
-                print("Pathology Data Frames: ", type(pathologyData.get("frames")))
-                print("Pathology Data FFT: ", type(pathologyData.get("fft")))
-                print("Pathology Data FFT Frequencies: ", type(pathologyData.get("fft_frequencies")))
-                print("Pathology Data FFT Magnitudes: ", type(pathologyData.get("fft_magnitudes")))
-                print("Pathology Data Spectral Data: ", type(pathologyData.get("spectral_data")))
-                print("Pathology Data Spectral Data Keys: ", pathologyData.get("spectral_data").keys())
-                print("Pathology Data Spectral Data FBME: ", type(pathologyData.get("spectral_data").get("fbme")))
-                print("Pathology Data Spectral Data SBME: ", type(pathologyData.get("spectral_data").get("sbme")))
-                print("Pathology Data Spectral Data TBME: ", type(pathologyData.get("spectral_data").get("tbme")))
-                print("Pathology Data Spectral Data LBST: ", type(pathologyData.get("spectral_data").get("lbst")))
-                print("Pathology Data Spectral Data LBST Keys: ", pathologyData.get("spectral_data").get("lbst"))
-
-
-                #write to document
-                """
+            
                 doc.reference.update({
                     "processed": True,
-                    "audioData": {
-                        "fft": pathologyData.get("fft"),
-                        "fft_frequencies": pathologyData.get("fft_frequencies"),
-                        "fft_magnitudes": pathologyData.get("fft_magnitudes"),
-                        "frames": pathologyData.get("frames"),
-                        "spectral_data": pathologyData.get("spectral_data"),
-                        "sampleRate": pathologySampleRate,
-                        "frameSize": frameSize,
-                        "stepSize": stepSize,
-                    },
-                })
-                """
+                    "spectralData": {
+                        "fbme": pathologyData["spectral_data"]["fbme"],
+                        "sbme": pathologyData["spectral_data"]["sbme"],
+                        "tbme": pathologyData["spectral_data"]["tbme"],
+                    }
+                }) 
+           
 
                 print("Done processing")
                 self.stop()
